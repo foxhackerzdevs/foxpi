@@ -5,8 +5,8 @@
 [![Python](https://img.shields.io/badge/Python-%3E%3D3.8-blue?logo=python&logoColor=white)](https://www.python.org/)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 [![PyPI](https://img.shields.io/pypi/v/foxpi)](https://pypi.org/project/foxpi/)
-[![Algorithms](https://img.shields.io/badge/Algorithms-4-orange)](#algorithms)
-[![Precision](https://img.shields.io/badge/Precision-Arbitrary-purple)](#precision-and-implementation)
+[![Algorithms](https://img.shields.io/badge/Algorithms-4-orange)](#--algorithms)
+[![Precision](https://img.shields.io/badge/Precision-Arbitrary-purple)](#--precision-and-implementation)
 
 FoxPi is a pure-Python command-line toolkit for computing, exploring, benchmarking, and validating π using several classical and modern algorithms.
 
@@ -37,22 +37,22 @@ The implementation uses integer-scaled arithmetic and includes an independent te
 
 - [Installation](#installation)
 - [Quick Start](#-quick-start)
-- [CLI Reference](#-cli-reference)
+- [CLI Reference](#--cli-reference)
   - [`digits`](#digits)
   - [`explore`](#explore)
   - [`compare`](#compare)
   - [`bbp`](#bbp)
-- [Algorithms](#-algorithms)
+- [Algorithms](#--algorithms)
   - [Chudnovsky](#chudnovsky)
   - [Ramanujan](#ramanujan)
   - [Machin](#machin)
   - [BBP](#bbp-hexadecimal-spigot)
-- [Precision and Implementation](#-precision-and-implementation)
+- [Precision and Implementation](#--precision-and-implementation)
 - [Testing](#-testing)
 - [Project Structure](#-project-structure)
-- [Development](#-development)
+- [Development](#--development)
 - [Performance](#-performance)
-- [Limitations](#-limitations)
+- [Limitations](#--limitations)
 - [Contributing](#-contributing)
 - [License](#-license)
 
@@ -78,8 +78,6 @@ cd foxpi
 
 ## Run directly
 
-You can run FoxPi directly from the repository:
-
 ```bash
 python cli.py digits 100
 ```
@@ -94,15 +92,11 @@ Time: 0.00xxs
 
 ## Install the CLI
 
-FoxPi defines a `foxpi` console-script entry point in `pyproject.toml`.
-
 ### Install from PyPI
 
 ```bash
 python3 -m pip install foxpi
 ```
-
-Then run:
 
 ```bash
 foxpi digits 100
@@ -116,13 +110,7 @@ cd foxpi
 python -m pip install -e .
 ```
 
-Then:
-
-```bash
-foxpi digits 100
-```
-
-Current version: **0.1.2**
+Current version: **0.1.3**
 
 ---
 
@@ -149,7 +137,7 @@ python cli.py bbp 100
 
 ---
 
-# - CLI Reference
+# -- CLI Reference
 
 FoxPi exposes four commands:
 
@@ -160,8 +148,6 @@ foxpi
 ├── compare
 └── bbp
 ```
-
-The same commands can be run through `python cli.py` when working directly from the repository.
 
 ---
 
@@ -186,8 +172,6 @@ python cli.py digits 1000 --method chudnovsky
 python cli.py digits 1000 --method ramanujan
 python cli.py digits 1000 --method machin
 ```
-
-FoxPi automatically raises Python’s integer-to-string digit limit when necessary.
 
 Negative digit counts are rejected.
 
@@ -240,7 +224,7 @@ python cli.py bbp 100
 
 ---
 
-# 🧮 Algorithms
+# -- Algorithms
 
 | Algorithm | Output | Primary purpose |
 |---|---|---|
@@ -264,11 +248,11 @@ python cli.py digits 10000 --method chudnovsky
 
 ## Ramanujan
 
-Ramanujan’s 1914 hypergeometric series for \(1/\pi\):
+Ramanujan’s 1914 hypergeometric series for 1/π:
 
-\[
-\frac{1}{\pi} = \frac{2\sqrt{2}}{9801} \sum_{k=0}^{\infty} \frac{(4k)! (1103 + 26390k)}{(k!)^4 396^{4k}}
-\]
+```
+1/π = (2√2 / 9801) × Σ [ (4k)! × (1103 + 26390k) / ((k!)⁴ × 396⁴ᵏ) ]
+```
 
 Excellent for studying rapid convergence.
 
@@ -283,9 +267,9 @@ python cli.py explore --method ramanujan --terms 20
 
 Classical Machin formula:
 
-\[
-\pi = 4 \bigl(4\arctan\frac{1}{5} - \arctan\frac{1}{239}\bigr)
-\]
+```
+π = 4 × (4 arctan(1/5) − arctan(1/239))
+```
 
 ```bash
 python cli.py digits 500 --method machin
@@ -304,7 +288,7 @@ python cli.py bbp 1
 
 ---
 
-# 🎯 Precision and Implementation
+# -- Precision and Implementation
 
 FoxPi uses **scaled-integer arithmetic** with internal guard digits.  
 No third-party arbitrary-precision library is required at runtime.
@@ -342,7 +326,7 @@ foxpi/
 
 ---
 
-# - Development
+# -- Development
 
 ```bash
 git clone https://github.com/foxhackerzdevs/foxpi.git
@@ -370,7 +354,7 @@ Performance depends on Python version, CPU, and requested precision.
 
 ---
 
-# - Limitations
+# -- Limitations
 
 - Extremely large precisions consume significant time and memory.
 - BBP currently returns a fixed 16 hexadecimal digits.
