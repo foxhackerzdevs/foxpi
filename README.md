@@ -4,8 +4,9 @@
 
 [![Python](https://img.shields.io/badge/Python-%3E%3D3.8-blue?logo=python&logoColor=white)](https://www.python.org/)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+[![PyPI](https://img.shields.io/pypi/v/foxpi)](https://pypi.org/project/foxpi/)
 [![Algorithms](https://img.shields.io/badge/Algorithms-4-orange)](#algorithms)
-[![Precision](https://img.shields.io/badge/Precision-Arbitrary-purple)](#decimal-digit-computation)
+[![Precision](https://img.shields.io/badge/Precision-Arbitrary-purple)](#precision-and-implementation)
 
 FoxPi is a pure-Python command-line toolkit for computing, exploring, benchmarking, and validating π using several classical and modern algorithms.
 
@@ -35,25 +36,25 @@ The implementation uses integer-scaled arithmetic and includes an independent te
 ## 📋 Table of Contents
 
 - [Installation](#installation)
-- [Quick Start](#quick-start)
-- [CLI Reference](#cli-reference)
+- [Quick Start](#-quick-start)
+- [CLI Reference](#-cli-reference)
   - [`digits`](#digits)
   - [`explore`](#explore)
   - [`compare`](#compare)
   - [`bbp`](#bbp)
-- [Algorithms](#algorithms)
+- [Algorithms](#-algorithms)
   - [Chudnovsky](#chudnovsky)
   - [Ramanujan](#ramanujan)
   - [Machin](#machin)
   - [BBP](#bbp-hexadecimal-spigot)
-- [Precision and Implementation](#precision-and-implementation)
-- [Testing](#testing)
-- [Project Structure](#project-structure)
-- [Development](#development)
-- [Performance](#performance)
-- [Limitations](#limitations)
-- [Contributing](#contributing)
-- [License](#license)
+- [Precision and Implementation](#-precision-and-implementation)
+- [Testing](#-testing)
+- [Project Structure](#-project-structure)
+- [Development](#-development)
+- [Performance](#-performance)
+- [Limitations](#-limitations)
+- [Contributing](#-contributing)
+- [License](#-license)
 
 ---
 
@@ -83,7 +84,7 @@ You can run FoxPi directly from the repository:
 python cli.py digits 100
 ```
 
-For example:
+Example output:
 
 ```text
 π (100 digits) using Chudnovsky:
@@ -97,8 +98,6 @@ FoxPi defines a `foxpi` console-script entry point in `pyproject.toml`.
 
 ### Install from PyPI
 
-If a published package is available:
-
 ```bash
 python3 -m pip install foxpi
 ```
@@ -111,76 +110,46 @@ foxpi digits 100
 
 ### Install from Source
 
-Clone the repository:
-
 ```bash
 git clone https://github.com/foxhackerzdevs/foxpi.git
 cd foxpi
-```
-
-Install it in editable mode:
-
-```bash
 python -m pip install -e .
 ```
 
-Then use:
+Then:
 
 ```bash
 foxpi digits 100
 ```
 
-The project metadata currently identifies the package as version `0.1.1`.
+Current version: **0.1.2**
 
 ---
 
 # 🚀 Quick Start
 
-Compute 100 digits of π:
-
 ```bash
+# Compute 100 digits
 python cli.py digits 100
-```
 
-Use Chudnovsky explicitly:
-
-```bash
+# Use a specific method
 python cli.py digits 1000 --method chudnovsky
-```
-
-Use Ramanujan:
-
-```bash
 python cli.py digits 1000 --method ramanujan
-```
-
-Use Machin:
-
-```bash
 python cli.py digits 1000 --method machin
-```
 
-Explore convergence:
-
-```bash
+# Explore convergence
 python cli.py explore --method chudnovsky --terms 15
-```
 
-Benchmark the 1000-digit Chudnovsky and Machin implementations:
-
-```bash
+# Benchmark
 python cli.py compare
-```
 
-Extract 16 hexadecimal digits beginning at hexadecimal position 100:
-
-```bash
+# Extract hexadecimal digits
 python cli.py bbp 100
 ```
 
 ---
 
-# 🖥️ CLI Reference
+# - CLI Reference
 
 FoxPi exposes four commands:
 
@@ -192,7 +161,7 @@ foxpi
 └── bbp
 ```
 
-The same commands can be run through `python cli.py` when working directly from the repository. The CLI requires a subcommand; invoking it without one displays the command-line usage information and exits with an error.
+The same commands can be run through `python cli.py` when working directly from the repository.
 
 ---
 
@@ -201,157 +170,77 @@ The same commands can be run through `python cli.py` when working directly from 
 Compute a requested number of decimal digits of π.
 
 ```bash
-python cli.py digits COUNT
+python cli.py digits COUNT [--method METHOD]
 ```
-
-### Arguments
 
 | Argument | Description |
 |---|---|
 | `COUNT` | Number of decimal digits requested |
-| `--method` | `chudnovsky`, `ramanujan`, or `machin` |
-
-The default method is **Chudnovsky**.
+| `--method` | `chudnovsky` (default), `ramanujan`, or `machin` |
 
 ### Examples
 
 ```bash
 python cli.py digits 50
-```
-
-```bash
 python cli.py digits 1000 --method chudnovsky
-```
-
-```bash
 python cli.py digits 1000 --method ramanujan
-```
-
-```bash
 python cli.py digits 1000 --method machin
 ```
 
-FoxPi also raises Python's integer-to-string digit limit when necessary so large requested precisions can be printed on Python versions that impose the default conversion limit.
+FoxPi automatically raises Python’s integer-to-string digit limit when necessary.
 
-### Input validation
-
-Negative decimal digit counts are rejected:
-
-```text
-Error: digit count must be >= 0
-```
+Negative digit counts are rejected.
 
 ---
 
-# `explore`
+## `explore`
 
 Explore the convergence of the Ramanujan or Chudnovsky series.
 
 ```bash
-python cli.py explore
+python cli.py explore [--method METHOD] [--terms N]
 ```
 
-### Options
-
-```bash
---method ramanujan
---method chudnovsky
---terms N
-```
-
-The default method is Ramanujan and the default number of displayed terms is 30.
-
-### Examples
+- Default method: `ramanujan`
+- Default terms: `30`
 
 ```bash
 python cli.py explore
-```
-
-```bash
 python cli.py explore --method ramanujan --terms 20
-```
-
-```bash
 python cli.py explore --method chudnovsky --terms 10
 ```
 
-The command displays intermediate π estimates and finishes with a convergence table containing the iteration, term information, and a π preview.
-
-For visualization purposes, the Chudnovsky convergence generator recomputes binary-splitting results at each step rather than using the optimized one-shot computation. The implementation explicitly treats this as suitable for the small number of terms used by `explore`.
-
 ---
 
-# `compare`
+## `compare`
 
-Benchmark the currently configured algorithm implementations.
+Benchmark Chudnovsky and Machin at 1000 decimal digits.
 
 ```bash
 python cli.py compare
 ```
 
-The current benchmark compares:
-
-- Chudnovsky
-- Machin
-
-Both are benchmarked at **1000 decimal digits**.
-
-Example:
-
-```text
-Benchmarking algorithms...
-
-Algorithm       | Precision (Digits)   | Time Elapsed (s)
-------------------------------------------------------------
-Chudnovsky      | 1000                 | ...
-Machin          | 1000                 | ...
-```
-
-> **Note:** Benchmark times depend on the Python version, processor, operating system, and system load. Treat the output as a local comparison rather than a universal performance ranking.
-
 ---
 
-# `bbp`
+## `bbp`
 
-Extract hexadecimal digits of π using the Bailey–Borwein–Plouffe formula.
+Extract 16 hexadecimal digits of π starting at a given position.
 
 ```bash
 python cli.py bbp POSITION
 ```
 
-`POSITION=1` refers to the first hexadecimal digit after the hexadecimal point.
-
-### Examples
+`POSITION=1` is the first hexadecimal digit after the point.
 
 ```bash
 python cli.py bbp 1
-```
-
-```bash
 python cli.py bbp 25
+python cli.py bbp 100
 ```
-
-```bash
-python cli.py bbp 1000
-```
-
-FoxPi returns **16 hexadecimal digits** beginning at the requested position.
-
-Example:
-
-```text
-Extracting 16 hex digits of π starting at position 1:
-243F6A8885A308D3
-(BBP Spigot — hexadecimal)
-```
-
-Positions below `1` are rejected by the CLI.
 
 ---
 
 # 🧮 Algorithms
-
-FoxPi currently implements four π-related algorithms.
 
 | Algorithm | Output | Primary purpose |
 |---|---|---|
@@ -364,19 +253,8 @@ FoxPi currently implements four π-related algorithms.
 
 ## Chudnovsky
 
-The Chudnovsky series is FoxPi's primary high-precision decimal computation method.
-
-The implementation uses **binary splitting** to evaluate the series efficiently using large integers. It estimates approximately 14 decimal digits of π per iteration and calculates the number of required terms from the requested precision.
-
-The implementation also uses additional guard precision internally before scaling the final result back to the requested number of digits.
-
-### Use it for
-
-- High-precision π computation
-- Large decimal digit counts
-- The default `digits` method
-
-Example:
+Binary-splitting implementation of the Chudnovsky series (~14 digits per term).  
+This is the default and recommended method for high-precision decimal computation.
 
 ```bash
 python cli.py digits 10000 --method chudnovsky
@@ -386,36 +264,16 @@ python cli.py digits 10000 --method chudnovsky
 
 ## Ramanujan
 
-FoxPi implements Ramanujan's 1914 hypergeometric series for `1/π`:
+Ramanujan’s 1914 hypergeometric series for \(1/\pi\):
 
-```text
-1/π =
-(2√2 / 9801)
-×
-Σ [
-  (4k)! × (1103 + 26390k)
-  /
-  ((k!)⁴ × 396⁴ᵏ)
-]
-```
+\[
+\frac{1}{\pi} = \frac{2\sqrt{2}}{9801} \sum_{k=0}^{\infty} \frac{(4k)! (1103 + 26390k)}{(k!)^4 396^{4k}}
+\]
 
-The implementation maintains the calculation using scaled integers and updates the hypergeometric numerator and denominator iteratively.
-
-### Use it for
-
-- Studying rapid series convergence
-- Mathematical exploration
-- High-precision decimal calculation
-
-Example:
+Excellent for studying rapid convergence.
 
 ```bash
 python cli.py digits 1000 --method ramanujan
-```
-
-Or explore it interactively:
-
-```bash
 python cli.py explore --method ramanujan --terms 20
 ```
 
@@ -423,21 +281,11 @@ python cli.py explore --method ramanujan --terms 20
 
 ## Machin
 
-FoxPi implements the classical Machin identity:
+Classical Machin formula:
 
-```text
-π = 4 × (4 arccot(5) − arccot(239))
-```
-
-The arccotangent series is evaluated using scaled integer arithmetic.
-
-### Use it for
-
-- A compact classical π formula
-- Mathematical education
-- Comparing an older approach with Chudnovsky
-
-Example:
+\[
+\pi = 4 \bigl(4\arctan\frac{1}{5} - \arctan\frac{1}{239}\bigr)
+\]
 
 ```bash
 python cli.py digits 500 --method machin
@@ -447,111 +295,44 @@ python cli.py digits 500 --method machin
 
 ## BBP hexadecimal spigot
 
-The Bailey–Borwein–Plouffe formula provides a particularly useful property: hexadecimal digits of π can be extracted starting at a selected position without first calculating all preceding hexadecimal digits.
-
-FoxPi's implementation uses Python's `Decimal` arithmetic with additional precision rather than native binary floating point. The implementation generates exactly 16 hexadecimal digits for each request.
-
-Example:
+Bailey–Borwein–Plouffe formula allowing direct extraction of hexadecimal digits without computing preceding ones.
 
 ```bash
 python cli.py bbp 1
-```
-
-Expected first 16 hexadecimal fractional digits:
-
-```text
-243F6A8885A308D3
+# → 243F6A8885A308D3
 ```
 
 ---
 
 # 🎯 Precision and Implementation
 
-FoxPi intentionally avoids relying on a third-party arbitrary-precision mathematics package for its core calculations.
+FoxPi uses **scaled-integer arithmetic** with internal guard digits.  
+No third-party arbitrary-precision library is required at runtime.
 
-The decimal algorithms use **scaled integers**. Additional guard digits are calculated internally and removed from the final integer representation before output.
-
-The project also provides its own integer square-root implementation based on Newton-Raphson iteration:
-
-```python
-isqrt(n)
-```
-
-It:
-
-- Rejects negative inputs with `ValueError`
-- Returns `0` for zero
-- Computes the integer floor square root for positive integers
-
-This helper is covered by the test suite.
+A custom Newton–Raphson `isqrt` implementation is provided and covered by the test suite.
 
 ---
 
 # 🧪 Testing
 
-FoxPi includes a test suite under `tests/`.
-
-Run it with Python's standard `unittest` framework:
-
 ```bash
 python -m unittest discover -s tests -v
 ```
 
-The tests cover:
-
-- Integer square roots
-- Chudnovsky decimal computation
-- Ramanujan decimal computation
-- Chudnovsky convergence terms
-- Machin decimal computation
-- BBP hexadecimal extraction
-- Generator termination
-- Invalid square-root input
-
-The π tests are deliberately checked against **independently generated reference digits** rather than simply comparing one FoxPi implementation against another. The repository's tests document reference values generated using `mpmath` at 250 decimal digits of working precision.
-
-### Decimal verification
-
-The Chudnovsky implementation is tested at:
-
-```text
-1
-10
-50
-100
-194
-```
-
-decimal places/digits according to the test suite's precision convention. Ramanujan and Machin are also checked against the reference decimal sequence.
-
-### BBP verification
-
-BBP output is independently checked at positions:
-
-```text
-1
-25
-50
-100
-```
-
-with 16 hexadecimal digits verified at each position.
+Tests verify results against independently generated reference digits (mpmath, 250 decimal digits of working precision).
 
 ---
 
 # 📁 Project Structure
-
-The current repository contains:
 
 ```text
 foxpi/
 ├── core/
 │   ├── algorithms.py
 │   └── visualize.py
-│
 ├── tests/
-│   └── test_algorithms.py
-│
+│   ├── test_algorithms.py
+│   └── test_cli.py
 ├── .gitignore
 ├── LICENSE
 ├── README.md
@@ -559,71 +340,22 @@ foxpi/
 └── pyproject.toml
 ```
 
-### `cli.py`
-
-Defines the `foxpi` command-line interface and dispatches commands to the mathematical and visualization modules.
-
-### `core/algorithms.py`
-
-Contains the mathematical implementations:
-
-- `get_ramanujan_pi_terms`
-- `get_chudnovsky_pi_terms`
-- `compute_chudnovsky_pi`
-- `compute_machin_pi`
-- `generate_bbp_spigot`
-- `isqrt`
-
-### `core/visualize.py`
-
-Provides terminal rendering helpers for convergence and benchmark results.
-
-### `tests/test_algorithms.py`
-
-Contains independent-reference verification tests for the mathematical implementations.
-
-### `pyproject.toml`
-
-Defines the package metadata and exposes:
-
-```text
-foxpi = cli:main
-```
-
-as the installed console command.
-
 ---
 
-# 🛠️ Development
-
-Create a development checkout:
+# - Development
 
 ```bash
 git clone https://github.com/foxhackerzdevs/foxpi.git
 cd foxpi
-```
 
-Run the CLI directly:
-
-```bash
+# Run directly
 python cli.py --help
-```
 
-Run tests:
-
-```bash
+# Run tests
 python -m unittest discover -s tests -v
-```
 
-Install in editable mode:
-
-```bash
+# Editable install
 python -m pip install -e .
-```
-
-Then:
-
-```bash
 foxpi --help
 ```
 
@@ -631,74 +363,36 @@ foxpi --help
 
 # ⚡ Performance
 
-Performance depends heavily on requested precision.
+Chudnovsky with binary splitting is the recommended high-performance path.  
+Use `python cli.py compare` for a quick local benchmark.
 
-For general high-precision decimal computation, Chudnovsky is the intended high-performance implementation. Its binary-splitting approach reduces the overhead of evaluating the series term-by-term.
-
-The built-in benchmark provides a convenient way to compare Chudnovsky and Machin on the current machine:
-
-```bash
-python cli.py compare
-```
-
-Keep in mind that:
-
-- Larger precisions require substantially larger integers.
-- Memory requirements increase with precision.
-- Runtime depends on the Python implementation and CPU.
-- Benchmark results are machine-specific.
-- `explore` is intentionally optimized for visualization rather than maximum throughput.
+Performance depends on Python version, CPU, and requested precision.
 
 ---
 
-# ⚠️ Limitations
+# - Limitations
 
-FoxPi is primarily an educational, experimental, and mathematical exploration tool.
-
-### Very large precisions
-
-Arbitrary precision does not mean unlimited practical precision. Extremely large requests can consume considerable CPU time and memory.
-
-### BBP output
-
-The BBP command currently emits 16 hexadecimal digits per invocation rather than providing a configurable output length.
-
-### Benchmark scope
-
-The `compare` command currently benchmarks Chudnovsky and Machin at a fixed 1000-digit precision. It is not a general benchmarking framework.
-
-### Convergence visualization
-
-The Chudnovsky convergence generator intentionally recomputes binary-splitting results for each displayed step. This makes it appropriate for exploration but not for replacing the optimized computation routine.
+- Extremely large precisions consume significant time and memory.
+- BBP currently returns a fixed 16 hexadecimal digits.
+- The `compare` command uses a fixed 1000-digit workload.
+- Convergence exploration (`explore`) intentionally recomputes for visualization and is not optimized for speed.
 
 ---
 
 # 🤝 Contributing
 
-Contributions, improvements, bug reports, and mathematical enhancements are welcome.
+Contributions are welcome. Suggested areas:
 
-Potential areas for development include:
-
-- Additional π algorithms
-- More efficient incremental convergence calculations
-- Configurable BBP output length
-- Expanded benchmark configuration
-- More comprehensive CLI tests
-- Performance profiling
-- Packaging and distribution improvements
-- Additional reference-value tests
+- Additional algorithms
+- Configurable BBP length
+- Expanded benchmarks
+- More tests
 - Documentation improvements
 
-## Suggested workflow
-
-1. Fork the repository.
-2. Create a feature branch.
-3. Make your changes.
-4. Add or update tests where appropriate.
-5. Run the test suite.
-6. Open a pull request with a clear description of the change.
-
-Before submitting a mathematical algorithm change, include independent reference validation whenever practical.
+1. Fork the repository  
+2. Create a feature branch  
+3. Add tests where appropriate  
+4. Open a pull request
 
 ---
 
@@ -706,45 +400,18 @@ Before submitting a mathematical algorithm change, include independent reference
 
 FoxPi is released under the **MIT License**.
 
-Copyright © 2026 Fox Hackerz.
+Copyright © 2026 Fox Hackerz
 
-See [`LICENSE`](LICENSE) for the complete license text.
-
----
-
-# 🔗 Repository
-
-**GitHub:**  
-https://github.com/foxhackerzdevs/foxpi
-
-**Project homepage:**  
-https://foxhackerzdevs.github.io/foxpi/
+See [`LICENSE`](LICENSE) for the full text.
 
 ---
 
-## 🦊 Why FoxPi?
+# 🔗 Links
 
-FoxPi brings several historically important π algorithms together in one small, dependency-free command-line project.
+- **GitHub:** https://github.com/foxhackerzdevs/foxpi  
+- **PyPI:** https://pypi.org/project/foxpi/  
+- **Homepage:** https://foxhackerzdevs.github.io/foxpi/
 
-It is designed not only to **calculate π**, but also to make the underlying computational ideas easy to experiment with:
-
-```text
-             ┌──────────────────────┐
-             │        FoxPi         │
-             │   π Explorer 🦊      │
-             └──────────┬───────────┘
-                        │
-        ┌───────────────┼────────────────┐
-        │               │                │
-        ▼               ▼                ▼
-  Decimal π         Convergence      Hexadecimal π
-        │               │                │
-   ┌────┼────┐      ┌───┴────┐          │
-   │    │    │      │        │          ▼
-   ▼    ▼    ▼      ▼        ▼        BBP
-  Chu  Ram  Mach  Ramanujan Chud
-  dnov  anu  in
-  sky   jan
-```
+---
 
 **Compute it. Explore it. Benchmark it. Verify it. 🦊**
