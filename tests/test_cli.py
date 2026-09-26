@@ -63,6 +63,22 @@ class TestNormalUsage(unittest.TestCase):
         code, out, err = run("explore", "--method", "chudnovsky", "--terms", "5")
         self.assertEqual(code, 0)
 
+    def test_explore_delivers_requested_term_count(self):
+        # Regression check: explore's internal generator precision used to
+        # be hardcoded to 100, which caps Chudnovsky at 9 terms and
+        # Ramanujan at 16 -- so the *default* `explore` (--terms 30) always
+        # silently fell short of its own default term count. Precision now
+        # scales with --terms, so both methods should deliver the full
+        # count requested, well past the old hardcoded caps.
+        for method, terms in [("ramanujan", 30), ("chudnovsky", 30), ("chudnovsky", 50)]:
+            code, out, err = run("explore", "--method", method, "--terms", str(terms))
+            self.assertEqual(code, 0)
+            self.assertNotIn("series exhausted", out,
+                              f"{method} with --terms {terms} exhausted early")
+            term_rows = sum(1 for line in out.splitlines() if line[:1].isdigit())
+            self.assertEqual(term_rows, terms,
+                              f"{method} with --terms {terms} only produced {term_rows} rows")
+
     def test_compare_runs(self):
         code, out, err = run("compare")
         self.assertEqual(code, 0)

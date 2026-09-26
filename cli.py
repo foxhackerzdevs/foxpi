@@ -20,8 +20,11 @@ from core.algorithms import (
 )
 from core.visualize import render_convergence_table, render_comparison
 
+VERSION = "0.1.5"  # keep in sync with pyproject.toml's [project].version
+
 def main():
     parser = argparse.ArgumentParser(prog="foxpi", description="High-precision π explorer 🦊")
+    parser.add_argument("--version", action="version", version=f"foxpi {VERSION}")
     sub = parser.add_subparsers(dest="cmd", required=True)
 
     # digits command
@@ -79,7 +82,14 @@ def main():
     elif args.cmd == "explore":
         print(f"Exploring convergence with {args.method}...\n")
         history = []
-        gen = get_ramanujan_pi_terms(100) if args.method == "ramanujan" else get_chudnovsky_pi_terms(100)
+        # Chudnovsky needs ~14 digits of precision per term (its well-known
+        # convergence rate), Ramanujan needs less (~8/term) -- scaling by
+        # 15/term covers both with margin, so `--terms N` actually yields
+        # N terms instead of silently exhausting early (previously hardcoded
+        # to precision=100, which caps out at 9 Chudnovsky / 16 Ramanujan
+        # terms regardless of what --terms requested).
+        explore_precision = max(100, args.terms * 15)
+        gen = get_ramanujan_pi_terms(explore_precision) if args.method == "ramanujan" else get_chudnovsky_pi_terms(explore_precision)
 
         for i in range(args.terms):
             try:

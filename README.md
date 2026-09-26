@@ -2,6 +2,8 @@
 
 **High-precision terminal π explorer — Chudnovsky, Ramanujan, Machin, and BBP spigot algorithms.**
 
+**More about me / other projects:** [abhrankan.netlify.app](https://abhrankan.netlify.app)
+
 [![Python](https://img.shields.io/badge/Python-%3E%3D3.8-blue?logo=python&logoColor=white)](https://www.python.org/)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 [![PyPI](https://img.shields.io/pypi/v/foxpi)](https://pypi.org/project/foxpi/)
@@ -110,7 +112,7 @@ cd foxpi
 python -m pip install -e .
 ```
 
-Current version: **0.1.4**
+Current version: **0.1.5**
 
 ---
 
@@ -199,6 +201,8 @@ python cli.py explore --method chudnovsky --terms 10
 ## `compare`
 
 Benchmark Chudnovsky and Machin at 1000 decimal digits.
+
+(Ramanujan and BBP aren't included in `compare` — Ramanujan is geared toward `explore`'s term-by-term convergence view rather than a timed benchmark, and BBP's hex-digit extraction isn't directly comparable to the other three's decimal-digit timing.)
 
 ```bash
 python cli.py compare
@@ -358,8 +362,8 @@ Performance depends on Python version, CPU, and requested precision.
 
 - Extremely large precisions consume significant time and memory.
 - BBP currently returns a fixed 16 hexadecimal digits.
-- The `compare` command uses a fixed 1000-digit workload.
-- Convergence exploration (`explore`) intentionally recomputes for visualization and is not optimized for speed.
+- The `compare` command uses a fixed 1000-digit workload, and only covers Chudnovsky and Machin (see [`compare`](#compare) above).
+- Convergence exploration (`explore`) intentionally recomputes for visualization and is not optimized for speed. Its internal precision scales with `--terms` (roughly 15 digits of working precision per requested term) so the requested term count is actually reached rather than silently falling short.
 
 ---
 
